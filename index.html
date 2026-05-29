@@ -3,28 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>114學年度特教助理人員特休差勤系統</title>
+    <title>中正國中特教組 - 特教助理員特休申請系統</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f6f9; color: #333; }
-        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #2c3e50; margin-bottom: 5px; }
-        .sub-title { text-align: center; color: #7f8c8d; margin-bottom: 20px; font-size: 14px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input, select { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
-        button { width: 100%; padding: 12px; background-color: #2ecc71; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold; }
-        button:hover { background-color: #27ae60; }
-        button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
-        .result-box { background: #e8f4f8; padding: 15px; border-radius: 4px; margin-top: 15px; text-align: center; font-size: 18px; }
-        .remaining-hours { font-size: 28px; color: #e74c3c; font-weight: bold; }
+        /* 溫馨可愛風配色與圓角設計 */
+        body { 
+            font-family: "Microsoft JhengHei", Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background-color: #fff9f3; /* 溫暖燕麥色底 */
+            color: #4a4a4a; 
+        }
+        .container { 
+            max-width: 550px; 
+            margin: 20px auto; 
+            background: #ffffff; 
+            padding: 30px; 
+            border-radius: 24px; /* 超可愛大圓角 */
+            box-shadow: 0 8px 24px rgba(218, 142, 87, 0.15); /* 溫暖色調陰影 */
+            border: 2px solid #ffe6d5;
+        }
+        .school-badge {
+            text-align: center;
+            font-size: 14px;
+            background: #ffe3d1;
+            color: #d35400;
+            padding: 4px 12px;
+            border-radius: 50px;
+            display: inline-block;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .header-area {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h2 { 
+            margin: 0;
+            color: #d35400; /* 溫馨暖橘色 */
+            font-size: 24px;
+        }
+        .sub-title { 
+            color: #7f8c8d; 
+            margin-top: 5px; 
+            font-size: 15px; 
+        }
+        /* 貼心期限提醒區 */
+        .notice-box {
+            background-color: #fff4ec;
+            border-left: 5px solid #ff9f43;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #ba5d12;
+        }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 6px; font-weight: bold; color: #6e4a3b; }
+        input, select { 
+            width: 100%; 
+            padding: 12px; 
+            box-sizing: border-box; 
+            border: 2px solid #ffdcd0; 
+            border-radius: 12px; 
+            font-size: 16px;
+            background-color: #fffcf9;
+            transition: all 0.3s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #ff9f43;
+            background-color: #ffffff;
+        }
+        button { 
+            width: 100%; 
+            padding: 14px; 
+            background-color: #ff9f43; /* 活力暖橘 */
+            color: white; 
+            border: none; 
+            border-radius: 12px; 
+            font-size: 17px; 
+            cursor: pointer; 
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(255, 159, 67, 0.3);
+            transition: all 0.2s;
+        }
+        button:hover { background-color: #f39c12; transform: translateY(-1px); }
+        button:disabled { background-color: #dcdde1; box-shadow: none; cursor: not-allowed; }
+        .result-box { 
+            background: #fff0e6; 
+            padding: 18px; 
+            border-radius: 16px; 
+            margin-top: 15px; 
+            text-align: center; 
+            font-size: 16px; 
+            font-weight: bold;
+            color: #5c3d2e;
+            border: 1px dashed #ffbd9b;
+        }
+        .remaining-hours { font-size: 32px; color: #e67e22; font-weight: bold; display: block; margin-top: 5px;}
         .loading { text-align: center; color: #e67e22; font-weight: bold; margin-bottom: 15px; }
+        .footer-text {
+            text-align: center;
+            font-size: 12px;
+            color: #bdc3c7;
+            margin-top: 25px;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>特教助理員特休申請系統</h2>
-    <div class="sub-title">114 學年度差勤紀錄</div>
+    <div class="header-area">
+        <span class="school-badge">🏫 中正國中特教組</span>
+        <h2>特教助理員特休申請系統</h2>
+        <div class="sub-title">114 學年度差勤自主管理</div>
+    </div>
+    
+    <div class="notice-box">
+        💡 <b>貼心提醒：</b><br>
+        親愛的助理老師，您在 <b>114學年度</b> 獲得的特休時數，可以在 <b>116年7月31日之前</b>（即115學年度結束前）妥善安排休完就可以囉！謝謝您的辛勞付出。
+    </div>
     
     <div id="loading-msg" class="loading">⏳ 正在與 Google 試算表安全連線，請稍候...</div>
 
@@ -35,56 +134,4 @@
         </select>
     </div>
 
-    <div class="result-box">
-        目前剩餘可休時數： <span class="remaining-hours" id="display-hours">0.00</span> 小時
-    </div>
-
-    <hr style="margin: 25px 0; border: 0; border-top: 1px solid #eee;">
-
-    <form id="leave-form">
-        <div class="form-group">
-            <label for="leave-date">請假日期：</label>
-            <input type="date" id="leave-date" required>
-        </div>
-        <div class="form-group">
-            <label for="leave-hours">本次請假時數 (小時)：</label>
-            <input type="number" id="leave-hours" min="0.01" step="0.01" placeholder="請輸入時數 (支援小數點後2位)" required>
-        </div>
-        <div class="form-group">
-            <label for="leave-reason">備註說明（選填）：</label>
-            <input type="text" id="leave-reason" placeholder="例如：上午請假、家中有事">
-        </div>
-        <button type="button" id="submit-btn" onclick="submitForm()" disabled>送出請假申請</button>
-    </form>
-</div>
-
-<script>
-    // 已經幫組長把專屬的 Google 橋樑網址完美寫入囉！
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbyeXGOAj1D84Pz7y6g56Qx6orRWMSL-Y3MinLA521km5YE137J0orWupXtUay7-wA1N/exec"; 
-
-    let globalMemberData = [];
-
-    // 網頁開啟時自動抓取最新資料
-    window.onload = function() {
-        fetch(GAS_URL)
-        .then(response => response.json())
-        .then(data => {
-            globalMemberData = data;
-            const select = document.getElementById('assistant-name');
-            select.innerHTML = '<option value="">-- 請選擇您的姓名 --</option>';
-            
-            data.forEach(member => {
-                let remaining = (member.total - member.used).toFixed(2);
-                let option = document.createElement('option');
-                option.value = member.name;
-                option.text = member.name;
-                option.setAttribute('data-remaining', remaining);
-                select.appendChild(option);
-            });
-            
-            select.disabled = false;
-            document.getElementById('submit-btn').disabled = false;
-            document.getElementById('loading-msg').style.display = 'none';
-        })
-        .catch(error => {
-            document.getElementById('loading-msg').innerText
+    <div
