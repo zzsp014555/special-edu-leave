@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>特教助理人員特休差勤系統</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f6f9; color: #333; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #2c3e50; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button { width: 100%; padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+        button:hover { background-color: #2980b9; }
+        .result-box { background: #e8f4f8; padding: 15px; border-radius: 4px; margin-top: 15px; text-align: center; font-size: 18px; }
+        .remaining-hours { font-size: 24px; color: #e74c3c; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>特教助理員特休申請系統</h2>
+    
+    <div class="form-group">
+        <label for="assistant-name">請選擇您的姓名：</label>
+        <select id="assistant-name" onchange="checkHours()">
+            <option value="">-- 請選擇 --</option>
+            <option value="王小明" data-total="40" data-used="12">王小明</option>
+            <option value="李大同" data-total="32" data-used="8">李大同</option>
+            <option value="張美麗" data-total="24" data-used="0">張美麗</option>
+        </select>
+    </div>
+
+    <div class="result-box">
+        剩餘可休時數： <span class="remaining-hours" id="display-hours">0</span> 小時
+    </div>
+
+    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+
+    <form id="leave-form">
+        <div class="form-group">
+            <label for="leave-date">請假日期：</label>
+            <input type="date" id="leave-date" required>
+        </div>
+        <div class="form-group">
+            <label for="leave-hours">本次請假時數 (小時)：</label>
+            <input type="number" id="leave-hours" min="0.5" step="0.5" placeholder="例如: 2 或 3.5" required>
+        </div>
+        <div class="form-group">
+            <label for="leave-reason">備註說明（選填）：</label>
+            <input type="text" id="leave-reason" placeholder="備註事由">
+        </div>
+        <button type="button" onclick="submitForm()">送出申請</button>
+    </form>
+</div>
+
+<script>
+    // 查詢剩餘時數的簡單邏輯
+    function checkHours() {
+        const select = document.getElementById('assistant-name');
+        const selectedOption = select.options[select.selectedIndex];
+        
+        if (!selectedOption.value) {
+            document.getElementById('display-hours').innerText = '0';
+            return;
+        }
+        
+        // 計算剩餘時數 = 總額 - 已休
+        const total = parseFloat(selectedOption.getAttribute('data-total'));
+        const used = parseFloat(selectedOption.getAttribute('data-used'));
+        const remaining = total - used;
+        
+        document.getElementById('display-hours').innerText = remaining;
+    }
+
+    // 送出表單資料
+    function submitForm() {
+        const name = document.getElementById('assistant-name').value;
+        const date = document.getElementById('leave-date').value;
+        const hours = document.getElementById('leave-hours').value;
+        const reason = document.getElementById('leave-reason').value;
+
+        if (!name || !date || !hours) {
+            alert('請完整填寫姓名、日期與時數！');
+            return;
+        }
+
+        // 這裡未來會接 Google Apps Script 傳送到試算表
+        alert(`【模擬送出成功】\n姓名：${name}\n日期：${date}\n時數：${hours} 小時\n\n系統已記錄！`);
+        
+        // 重設表單
+        document.getElementById('leave-form').reset();
+        document.getElementById('display-hours').innerText = '0';
+        document.getElementById('assistant-name').selectedIndex = 0;
+    }
+</script>
+
+</body>
+</html>
