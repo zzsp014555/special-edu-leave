@@ -4,8 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>中正國中特教組 - 特教助理員特休申請系統</title>
+    <script>
+        // 🚀 【終極破 LINE 語法】偵測如果是在 LINE 內建瀏覽器開啟，自動強制跳出，用手機原生瀏覽器打開！
+        if (navigator.userAgent.indexOf('Line') > -1) {
+            const currentUrl = window.location.href;
+            if (currentUrl.indexOf('?') > -1) {
+                window.location.href = currentUrl + '&openExternalBrowser=1';
+            } else {
+                window.location.href = currentUrl + '?openExternalBrowser=1';
+            }
+        }
+    </script>
     <style>
-        /* 溫馨可愛風配色與圓角設計 */
         body { 
             font-family: "Microsoft JhengHei", Arial, sans-serif; 
             margin: 0; 
@@ -159,7 +169,6 @@
 </div>
 
 <script>
-    // 綁定組長最新生成的保證暢通 GAS 網址
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxEq1wSsPwSJQQbIld4fUe9Tkx1Gg_TKxlM24D7uyF6qA9R86csz258rmjUYHxCboK3/exec"; 
 
     let globalMemberData = [];
@@ -173,16 +182,15 @@
             select.innerHTML = '<option value="">-- 請選擇您的姓名 --</option>';
             
             data.forEach(member => {
-                // 💡 安全解讀調整：相容 Google Apps Script 回傳的各式欄位格式
-                let totalHours = parseFloat(member.total || member.特休總時數 || 0);
-                let usedHours = parseFloat(member.used || member.已請假時數 || 0);
+                let totalHours = parseFloat(member.total || 0);
+                let usedHours = parseFloat(member.used || 0);
                 let remValue = totalHours - usedHours;
                 
                 let remaining = Number.isInteger(remValue) ? remValue.toString() : remValue.toFixed(0);
                 
                 let option = document.createElement('option');
-                option.value = member.name || member.姓名;
-                option.text = member.name || member.姓名;
+                option.value = member.name;
+                option.text = member.name;
                 option.setAttribute('data-remaining', remaining);
                 select.appendChild(option);
             });
