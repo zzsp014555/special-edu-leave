@@ -78,4 +78,183 @@
         button { 
             width: 100%; 
             padding: 14px; 
-            background
+            background-color: #ff9f43; /* 活力暖橘 */
+            color: white; 
+            border: none; 
+            border-radius: 12px; 
+            font-size: 17px; 
+            cursor: pointer; 
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(255, 159, 67, 0.3);
+            transition: all 0.2s;
+        }
+        button:hover { background-color: #f39c12; transform: translateY(-1px); }
+        button:disabled { background-color: #dcdde1; box-shadow: none; cursor: not-allowed; }
+        .result-box { 
+            background: #fff0e6; 
+            padding: 18px; 
+            border-radius: 16px; 
+            margin-top: 15px; 
+            text-align: center; 
+            font-size: 16px; 
+            font-weight: bold;
+            color: #5c3d2e;
+            border: 1px dashed #ffbd9b;
+        }
+        .remaining-hours { font-size: 32px; color: #e67e22; font-weight: bold; display: block; margin-top: 5px;}
+        .loading { text-align: center; color: #e67e22; font-weight: bold; margin-bottom: 15px; }
+        .footer-text {
+            text-align: center;
+            font-size: 12px;
+            color: #bdc3c7;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-area">
+        <span class="school-badge">🏫 中正國中特教組</span>
+        <h2>特教助理員特休申請系統</h2>
+        <div class="sub-title">114 學年度差勤自主管理</div>
+    </div>
+    
+    <div class="notice-box">
+        💡 <b>貼心提醒：</b><br>
+        親愛的助理老師，您在 <b>114學年度</b> 獲得的特休時數，可以在 <b>116年7月31日之前</b>（即115學年度結束前）妥善安排休完就可以囉！謝謝您的辛勞付出。
+    </div>
+    
+    <div id="loading-msg" class="loading">⏳ 正在與 Google 試算表安全連線，請稍候...</div>
+
+    <div class="form-group">
+        <label for="assistant-name">請選擇您的姓名：</label>
+        <select id="assistant-name" onchange="checkHours()" disabled>
+            <option value="">-- 資料載入中 --</option>
+        </select>
+    </div>
+
+    <div class="result-box">
+        您目前剩餘可休時數： <span class="remaining-hours" id="display-hours">0.00 小時</span>
+    </div>
+
+    <hr style="margin: 25px 0; border: 0; border-top: 2px dashed #ffe6d5;">
+
+    <form id="leave-form">
+        <div class="form-group">
+            <label for="leave-date">請假日期：</label>
+            <input type="date" id="leave-date" required>
+        </div>
+        <div class="form-group">
+            <label for="leave-hours">本次請假時數 (小時)：</label>
+            <input type="number" id="leave-hours" min="0.01" step="0.01" placeholder="請輸入時數 (例如：2 或 1.5)" required>
+        </div>
+        <div class="form-group">
+            <label for="leave-reason">備註說明（選填）：</label>
+            <input type="text" id="leave-reason" placeholder="例如：上午請假、因事請假">
+        </div>
+        <button type="button" id="submit-btn" onclick="submitForm()" disabled>送出請假申請</button>
+    </form>
+    
+    <div class="footer-text">中正國中特教組 溫馨營運</div>
+</div>
+
+<script>
+    // 已自動為組長替換為最新部署的網址：
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbyeXGOAj1D84Pz7y6g56Qx6orRWMSL-Y3MinLA521km5YE137J0orWupXtUay7-wA1N/exec"; 
+
+    let globalMemberData = [];
+
+    // 網頁開啟時自動抓取最新資料
+    window.onload = function() {
+        fetch(GAS_URL)
+        .then(response => response.json())
+        .then(data => {
+            globalMemberData = data;
+            const select = document.getElementById('assistant-name');
+            select.innerHTML = '<option value="">-- 請選擇您的姓名 --</option>';
+            
+            data.forEach(member => {
+                let remaining = (member.total - member.used).toFixed(2);
+                let option = document.createElement('option');
+                option.value = member.name;
+                option.text = member.name;
+                option.setAttribute('data-remaining', remaining);
+                select.appendChild(option);
+            });
+            
+            select.disabled = false;
+            document.getElementById('submit-btn').disabled = false;
+            document.getElementById('loading-msg').style.display = 'none';
+        })
+        .catch(error => {
+            document.getElementById('loading-msg').innerText = "❌ 系統連線失敗，請確認試算表已開啟「知道連結的任何人皆可編輯」權限。";
+            console.error(error);
+        });
+    };
+
+    // 顯示時數
+    function checkHours() {
+        const select = document.getElementById('assistant-name');
+        const selectedOption = select.options[select.selectedIndex];
+        
+        if (!selectedOption.value) {
+            document.getElementById('display-hours').innerText = '0.00 小時';
+            return;
+        }
+        
+        const remaining = selectedOption.getAttribute('data-remaining');
+        document.getElementById('display-hours').innerText = remaining + ' 小時';
+    }
+
+    // 送出表單與溫馨小語回饋
+    function submitForm() {
+        const name = document.getElementById('assistant-name').value;
+        const date = document.getElementById('leave-date').value;
+        const hours = parseFloat(document.getElementById('leave-hours').value);
+        const reason = document.getElementById('leave-reason').value;
+        const select = document.getElementById('assistant-name');
+        const currentRemaining = parseFloat(select.options[select.selectedIndex].getAttribute('data-remaining'));
+
+        if (!name || !date || !hours) {
+            alert('請完整填寫姓名、日期與時數喔！');
+            return;
+        }
+
+        if (hours <= 0) {
+            alert('請輸入正確的請假時數！');
+            return;
+        }
+
+        if (hours > currentRemaining) {
+            alert(`【申請失敗 💡】\n親愛的 ${name} 老師，您的剩餘特休時數僅剩 ${currentRemaining} 小時，無法申請 ${hours} 小時喔，請重新確認！`);
+            return;
+        }
+
+        document.getElementById('submit-btn').innerText = "正在為您登錄假單...";
+        document.getElementById('submit-btn').disabled = true;
+
+        const payload = { name: name, date: date, hours: hours, reason: reason };
+
+        fetch(GAS_URL, {
+            method: "POST",
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(result => {
+            if(result.status === "success") {
+                // 中正國中特教組專屬溫馨感謝對話框
+                alert(`🎉 申請成功！\n\n您的付出我們都看見了，因為有您的陪伴，特生們的學習之路變得更加溫暖。\n\n中正國中特教組衷心感謝您的愛心與辛勞！❤️`);
+                location.reload(); 
+            }
+        })
+        .catch(err => {
+            alert('系統忙碌中，請稍後再試，或直接聯絡特教組長。');
+            document.getElementById('submit-btn').innerText = "送出請假申請";
+            document.getElementById('submit-btn').disabled = false;
+        });
+    }
+</script>
+
+</body>
+</html>
